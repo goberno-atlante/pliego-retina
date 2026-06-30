@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "conformance",
+  "system": "retina-delivery",
+  "payload": {
+    "standard": "eu/mdr@2017",
+    "clauses": [
+      {
+        "clause_id": "mdr.gspr-3-risk-management",
+        "decision": "covered"
+      },
+      {
+        "clause_id": "mdr.gspr-1-safety-performance",
+        "decision": "covered"
+      }
+    ]
+  }
+}
