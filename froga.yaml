@@ -1,4 +1,4 @@
 # Licitador A: responde al pliego técnico saude-atlante.
 # responds_to_pliego = sha256(pliego.oscal.yaml raw bytes) — trazabilidad T4.
 # Todas las cláusulas block cubiertas → ACEPTADO.
-responds_to_pliego: "5a2f1a76e3bbf7d89f66bb047f0f9ef5d329165d43e4041638f397de362c2051"
+responds_to_pliego: "3641a143ff847f4be38e9234f1ec7fa8ba090c15cf0316aa589f102ddfdb1c08"

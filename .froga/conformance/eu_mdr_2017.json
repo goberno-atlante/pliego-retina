@@ -3,14 +3,14 @@
   "kind": "conformance",
   "system": "retina-delivery",
   "payload": {
-    "standard": "eu/pren-18228@2026",
+    "standard": "eu/mdr@2017",
     "clauses": [
       {
-        "clause_id": "6.2.1",
+        "clause_id": "mdr.gspr-3-risk-management",
         "decision": "covered"
       },
       {
-        "clause_id": "6.3",
+        "clause_id": "mdr.gspr-1-safety-performance",
         "decision": "covered"
       }
     ]
