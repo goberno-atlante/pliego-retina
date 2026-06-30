@@ -1,0 +1,72 @@
+# Gate de conformidad del pliego — bloquea entregas de licitador que no cumplen la ley.
+#
+# Vive en el REPO DEL GOBIERNO (Atlante/pliego-*). Corre cuando un licitador abre una PR
+# de entrega (su fork → el repo del pliego) con su evidencia firmada. Re-deriva la compuerta
+# `froga conformance --against-pliego` sobre la entrega: si el licitador NO cubre las cláusulas
+# block del pliego (o responde a otro pliego, o le falta entitlement de una norma de pago),
+# el check FALLA → la branch protection bloquea el merge de la PR.
+#
+# SETUP (una vez, por repo de pliego en Atlante):
+#   1. Secret `FROGA_SOURCE_TOKEN` = PAT fine-grained con `contents:read` sobre Venturalitica/seigarrena
+#      (mientras seigarrena sea privado; cuando haya release público de froga, se cambia a `install.sh`).
+#   2. Branch protection en `main`: required status check = "gate-pliego / conformidad" → el merge
+#      de una PR de licitador queda bloqueado si el gate falla.
+#   3. La pubkey del gobierno (firmante del pliego) va en `AAPP_PUBKEY` abajo (material PÚBLICO).
+
+name: gate-pliego
+on:
+  pull_request:
+    # Las entregas del licitador tocan su froga.yaml + su evidencia firmada.
+    paths:
+      - "froga.yaml"
+      - ".froga/**"
+      - "pliego.oscal.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  conformidad:
+    name: conformidad
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout de la entrega (HEAD de la PR del licitador)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Mientras seigarrena sea privado, froga se instala desde el source con un token.
+      # Cuando exista release público de froga: sustituir por `curl -sSf https://get.venturalitica.ai | sh`.
+      - name: instalar froga (desde el source de seigarrena)
+        run: |
+          cargo install --git "https://x-access-token:${{ secrets.FROGA_SOURCE_TOKEN }}@github.com/Venturalitica/seigarrena" \
+            froga-cli --bin froga --locked
+
+      - name: gate — froga conformance --against-pliego
+        run: |
+          set -euo pipefail
+          # Pubkey del GOBIERNO (firmante del pliego.oscal.yaml). Material PÚBLICO.
+          AAPP_PUBKEY="042e95ed2bfb675c671853cfd4a3a4854b2eb83627d565fce2857ab206a7f798c551f339bfa82027a361fdc77096ec38be3ce15ced0e18345f773bfd2dabdbf3f5"
+          # Pubkey del LICITADOR: la que viene en su entrega (.froga/PUBKEY.txt). El gate verifica
+          # las firmas SP1 de la evidencia contra ESTA clave (autenticidad de la entrega).
+          if [ ! -f .froga/PUBKEY.txt ]; then
+            echo "::error::La entrega no incluye .froga/PUBKEY.txt (el licitador no se ha enrolado)."
+            exit 1
+          fi
+          BIDDER_PUBKEY="$(tr -d '[:space:]' < .froga/PUBKEY.txt)"
+
+          echo "▶ Compuerta del pliego sobre la entrega del licitador…"
+          # --against-pliego: verifica la firma del pliego (path-pinned) + las firmas SP1 de la
+          # evidencia + el cross-check del digest (responds_to_pliego) + la intersección de cláusulas
+          # (block exige Covered MEDIDO) + la composición SP2 (norma de pago → entitlement válido).
+          # exit 0 = ACEPTADO (cumple); exit != 0 = RECHAZADO (no cumple la ley) → PR bloqueada.
+          froga conformance --against-pliego pliego.oscal.yaml \
+            --aapp-pubkey "$AAPP_PUBKEY" \
+            --pubkey "$BIDDER_PUBKEY"
+
+      - name: resultado
+        if: success()
+        run: echo "✅ ACEPTADO — la entrega cumple el pliego. La PR puede mergearse."
+      # En fallo, el step anterior ya salió != 0 → el job falla → la branch protection bloquea el merge.

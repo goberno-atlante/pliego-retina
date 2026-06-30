@@ -1,0 +1,19 @@
+pliego_version: "1"
+metadata:
+  title: "Pliego técnico saude-atlante — producto sanitario SaMD de cribado de retinopatía (MDR + AI Act)"
+  risk_class: alto
+  issued_by_org: saude-atlante-aapp
+  issued_at: "2026-06-30"
+requirements:
+  - clause_id: "mdr.gspr-3-risk-management"
+    standard: eu/mdr@2017
+    enforcement: block
+  - clause_id: "mdr.gspr-1-safety-performance"
+    standard: eu/mdr@2017
+    enforcement: block
+  - clause_id: "6.2.1"
+    standard: eu/pren-18228@2026
+    enforcement: block
+  - clause_id: "6.3"
+    standard: eu/pren-18228@2026
+    enforcement: block
