@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "conformance",
+  "system": "retina-delivery",
+  "payload": {
+    "standard": "iso/23894@2023",
+    "clauses": [
+      {
+        "clause_id": "6.5",
+        "decision": "covered"
+      }
+    ]
+  }
+}
