@@ -1,0 +1,13 @@
+pliego_version: "1"
+metadata:
+  title: "Pliego técnico saude-atlante — cribado de retinopatía (AI Act Art.6 + Anexo III §5b)"
+  risk_class: alto
+  issued_by_org: saude-atlante-aapp
+  issued_at: "2026-06-30"
+requirements:
+  - clause_id: "6.2.1"
+    standard: eu/pren-18228@2026
+    enforcement: block
+  - clause_id: "6.5"
+    standard: iso/23894@2023
+    enforcement: block
