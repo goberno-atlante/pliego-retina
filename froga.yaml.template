@@ -3,8 +3,8 @@
 #
 # Clase de riesgo del pliego: alto
 # Normas referenciadas en el pliego:
+#   - eu/mdr@2017
 #   - eu/pren-18228@2026
-#   - iso/23894@2023
 
 system:
   name: ""        # Nombre identificador del sistema
